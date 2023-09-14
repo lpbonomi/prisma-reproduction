@@ -2,56 +2,74 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const withDummyModelId = {
+  dummyModelId: 1,
+};
+
+const withStatusId = {
+  statusId: 1,
+};
+
+const withDummyModelConnectOrCreate = {
+  DummyModel: {
+    connectOrCreate: {
+      where: {
+        id: 1,
+      },
+      create: {
+        id: 1,
+        slug: "dummy",
+      },
+    },
+  },
+};
+
+const withStatusConnectOrCreate = {
+  Status: {
+    connectOrCreate: {
+      where: {
+        slug: "PENDING",
+      },
+      create: {
+        slug: "PENDING",
+      },
+    },
+  },
+};
+
+////////////
+////////////
+////////////
+////////////
+
 // This works
 prisma.payment.create({
   data: {
-    dummyModelId: 1,
-    statusId: 1,
+    ...withDummyModelId,
+    ...withStatusId,
   },
 });
 
 // This works
 prisma.payment.create({
   data: {
-    DummyModel: {
-      connectOrCreate: {
-        where: {
-          id: 1,
-        },
-        create: {
-          id: 1,
-          slug: "dummy",
-        },
-      },
-    },
-    Status: {
-      connectOrCreate: {
-        where: {
-          slug: "PENDING",
-        },
-        create: {
-          slug: "PENDING",
-        },
-      },
-    },
+    ...withDummyModelConnectOrCreate,
+    ...withStatusConnectOrCreate,
   },
 });
 
 // This doesn't
 prisma.payment.create({
   data: {
-    dummyModelId: 1,
-    Status: {
-      connectOrCreate: {
-        where: {
-          slug: "PENDING",
-        },
-        create: {
-          slug: "PENDING",
-        },
-      },
-    },
+    ...withDummyModelConnectOrCreate,
+    ...withStatusId,
   },
 });
 
-//  Looks like the mixed syntax is not supported
+// This doesn't
+prisma.payment.create({
+  data: {
+    ...withDummyModelId,
+    ...withStatusConnectOrCreate,
+  },
+});
