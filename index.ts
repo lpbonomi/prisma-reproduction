@@ -53,3 +53,5 @@ prisma.payment.create({
     },
   },
 });
+
+//  Looks like the mixed syntax is not supported
